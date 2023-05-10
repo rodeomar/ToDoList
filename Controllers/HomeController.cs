@@ -1,30 +1,42 @@
 using Microsoft.AspNetCore.Mvc;
 using ToDoList.Models;
+using System.Collections.Generic;
 
 namespace ToDoList.Controllers
 {
-  public class HomeController : Controller
+  public class ItemsController : Controller
   {
-
-    [Route("/")]
+    [HttpGet("/items")]
     public ActionResult Index()
     {
-      Item starterItem = new Item("Add first item to To Do List");
-      return View(starterItem);
+      List<Item> allItems = Item.GetAll();
+      return View(allItems);
     }
 
-    [Route("/items/new")]
-    public ActionResult CreateForm()
+    [HttpGet("/items/new")]
+    public ActionResult New()
     {
       return View();
     }
 
-    [Route("/items")]
+    [HttpPost("/items")]
     public ActionResult Create(string description)
     {
       Item myItem = new Item(description);
-      return View("Index", myItem);
+      return RedirectToAction("Index");
     }
 
+    [HttpPost("/items/delete")]
+    public ActionResult DeleteAll()
+    {
+      Item.ClearAll();
+      return View();
+    }
+    [HttpGet("/items/{id}")]
+    public ActionResult Show(int id)
+    {
+      Item foundItem = Item.Find(id);
+      return View(foundItem);
+    }
   }
 }
